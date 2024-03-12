@@ -1,5 +1,6 @@
 import math 
 
+#Las funciones se deben de escribir en formato de codigo de Python
 def evaluar_funcion(funcion:str, x:float, y:float=0) -> float:
     return eval(funcion)
 
@@ -74,13 +75,3 @@ def euler(funcion:str, limite_inferior:float, limite_superior:float, intervalos:
         y = y_anterior + h * evaluar_funcion(funcion,t,y_anterior) if i !=0 else valor_inicial
         print(f"{i} | {t} | {y}")
         y_anterior = y
-
-def main():
-    #print(biseccion("math.pow(math.e,-x)-math.log(x)",1,1.5,1))
-    #print(riemann("3 * x * math.pow(math.e,x**2)",0,1,4))
-    #print(riemann("x * math.sqrt(x**2 +1)",0,1,4))
-    #print(trapecio("math.pow(math.e,x**2)",0,1,5))
-    euler("2*x*y",1,2,4,1)
-
-if __name__ == "__main__":
-    main()
