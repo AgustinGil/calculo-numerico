@@ -1,19 +1,20 @@
-import math 
+from tabla import *
+import math
 
 #Las funciones se deben de escribir en formato de codigo de Python
 def evaluar_funcion(funcion:str, x:float, y:float=0) -> float:
     return eval(funcion)
 
-def se_cumple_valor_intermedio(funcion:str, a:float, b:float) -> bool:
-    return evaluar_funcion(funcion,a)*evaluar_funcion(funcion,b) < 0
-
-def calcular_punto_medio(a:float, b:float) -> float:
-    return (a+b)/2
-
 def calcular_error_relativo(valor_real:float, valor_aproximado:float) -> float:
     return abs((valor_real-valor_aproximado)/valor_real) if valor_real != 0 else 0
 
 def biseccion(funcion:str, limite_inferior:float, limite_superior:float, error_esperado:float) -> float:
+    def se_cumple_valor_intermedio(funcion:str, a:float, b:float) -> bool:
+        return evaluar_funcion(funcion,a)*evaluar_funcion(funcion,b) < 0
+
+    def calcular_punto_medio(a:float, b:float) -> float:
+        return (a+b)/2
+
     m_actual = calcular_punto_medio(limite_inferior,limite_superior)
     m_previo = 0
     i = 1
@@ -52,10 +53,10 @@ def riemann(funcion:str, limite_inferior:float, limite_superior:float, intervalo
     
     return acumulador
 
-def calcular_area_trapecio(base_menor:float, base_mayor:float, altura:float) -> float:
-    return((base_menor+base_mayor)*altura)/2
-
 def trapecio(funcion: str, limite_inferior: float, limite_superior:float, intervalos: int) -> float:
+    def calcular_area_trapecio(base_menor:float, base_mayor:float, altura:float) -> float:
+        return((base_menor+base_mayor)*altura)/2
+
     h = calcular_paso(limite_inferior,limite_superior,intervalos)
     acumulador = 0
     x = limite_inferior
@@ -66,12 +67,18 @@ def trapecio(funcion: str, limite_inferior: float, limite_superior:float, interv
     
     return acumulador
 
-def euler(funcion:str, limite_inferior:float, limite_superior:float, intervalos:int, valor_inicial:float) -> float:
+def euler(funcion:str, limite_inferior:float, limite_superior:float, intervalos:int, valor_inicial:float) -> list:
     h = calcular_paso(limite_inferior,limite_superior,intervalos)
     y_anterior = valor_inicial
-    
+    tabla_resultado = Tabla(["i","t","y"])
+
     for i in range(intervalos+1):
         t = h * i + limite_inferior
         y = y_anterior + h * evaluar_funcion(funcion,t,y_anterior) if i !=0 else valor_inicial
-        print(f"{i} | {t} | {y}")
+        tabla_resultado.agregar_fila([i,t,y])
         y_anterior = y
+    
+    return tabla_resultado.formatear_string()
+
+
+print(euler("math.pow(y,4)",0,1,4,1))
