@@ -1,7 +1,7 @@
 from tabla import *
 import math
 
-#Las funciones se deben de escribir en formato de codigo de Python
+#Las funciones se deben de escribir en formato de codigo de Python, en terminos de x e y
 def evaluar_funcion(funcion:str, x:float, y:float=0) -> float:
     return eval(funcion)
 
@@ -39,6 +39,21 @@ def biseccion(funcion:str, limite_inferior:float, limite_superior:float, error_e
             
     return m_actual
 
+def newton_rapshon(funcion:str, funcion_derivada:str, valor_inicial:float, error_esperado:float) -> float:
+    error_actual = 100
+    x_anterior = valor_inicial
+
+    tabla_resultado = Tabla(["Aprox. a la raiz","Error aprox."])
+    tabla_resultado.agregar_fila([x_anterior,""])
+
+    while(error_esperado < error_actual):
+        i = x_anterior
+        x = i - (evaluar_funcion(funcion,i)/evaluar_funcion(funcion_derivada,i))
+        error_actual = calcular_error_relativo(x,x_anterior) * 100
+        tabla_resultado.agregar_fila([x,f"{error_actual}%"])
+        x_anterior = x  
+    return tabla_resultado.obtener_string()
+
 def calcular_paso(limite_inferior:float, limite_superior:float, intervalos: int) -> float:
     return (limite_superior-limite_inferior)/intervalos
 
@@ -67,7 +82,7 @@ def trapecio(funcion: str, limite_inferior: float, limite_superior:float, interv
     
     return acumulador
 
-def euler(funcion:str, limite_inferior:float, limite_superior:float, valor_inicial:float, intervalos:int=None, paso:float=None) -> list:
+def euler(funcion:str, limite_inferior:float, limite_superior:float, valor_inicial:float, intervalos:int=None, paso:float=None,funcion_real:str=None) -> list:
     if paso is None and intervalos is None:
         raise ValueError('Debes ingresar un valor de intervalo o de paso')
     elif paso is not None and intervalos is not None:
@@ -77,15 +92,20 @@ def euler(funcion:str, limite_inferior:float, limite_superior:float, valor_inici
         intervalos = intervalos if intervalos is not None else round((limite_superior-limite_inferior)/h)
 
     y_anterior = valor_inicial
-    tabla_resultado = Tabla(["i","t","y"])
+    indices= ["i","t","y"] if funcion_real is None else ["i","t","y","Zi","Er"]
+    tabla_resultado = Tabla(indices)
+        
 
     for i in range(intervalos+1):
         t = h * i + limite_inferior
         y = y_anterior + h * evaluar_funcion(funcion,t,y_anterior) if i !=0 else valor_inicial
-        tabla_resultado.agregar_fila([i,t,y])
+        
+        if funcion_real is not None:
+            z = evaluar_funcion(funcion_real,t,y_anterior)
+            error = calcular_error_relativo(z,y)
+        
+        fila = [i,t,y] if funcion_real is None else [i,t,y,z,error]
+        tabla_resultado.agregar_fila(fila)
         y_anterior = y
     
     return tabla_resultado
-
-resultado = euler("x**2 +0.5 * y**2",1,1.3,2,paso=0.1)
-print(Tabla.obtener_string(resultado))

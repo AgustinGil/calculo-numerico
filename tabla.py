@@ -21,7 +21,7 @@ class Tabla:
         if (len(elementos) == len(self.indices)):
             self.contenido.append(elementos)
         else:
-            raise ValueError('El numero de elementos no coincide con la cantidad de indices')
+            raise ValueError(f'El numero de elementos ({len(elementos)}) no coincide con la cantidad de indices({len(self.indices)})')
 
     def obtener_contenido(self) -> list:
         return self.contenido
