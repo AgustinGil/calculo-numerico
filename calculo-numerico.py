@@ -67,8 +67,15 @@ def trapecio(funcion: str, limite_inferior: float, limite_superior:float, interv
     
     return acumulador
 
-def euler(funcion:str, limite_inferior:float, limite_superior:float, intervalos:int, valor_inicial:float) -> list:
-    h = calcular_paso(limite_inferior,limite_superior,intervalos)
+def euler(funcion:str, limite_inferior:float, limite_superior:float, valor_inicial:float, intervalos:int=None, paso:float=None) -> list:
+    if paso is None and intervalos is None:
+        raise ValueError('Debes ingresar un valor de intervalo o de paso')
+    elif paso is not None and intervalos is not None:
+        raise ValueError('No puedes ingresar paso e intervalos, solo uno de ellos')
+    else:
+        h = calcular_paso(limite_inferior,limite_superior,intervalos) if paso is None else paso
+        intervalos = intervalos if intervalos is not None else round((limite_superior-limite_inferior)/h)
+
     y_anterior = valor_inicial
     tabla_resultado = Tabla(["i","t","y"])
 
@@ -78,7 +85,7 @@ def euler(funcion:str, limite_inferior:float, limite_superior:float, intervalos:
         tabla_resultado.agregar_fila([i,t,y])
         y_anterior = y
     
-    return tabla_resultado.formatear_string()
+    return tabla_resultado
 
-
-print(euler("math.pow(y,4)",0,1,4,1))
+resultado = euler("x**2 +0.5 * y**2",1,1.3,2,paso=0.1)
+print(Tabla.obtener_string(resultado))
